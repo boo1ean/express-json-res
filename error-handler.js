@@ -1,8 +1,4 @@
-var log = {
-	error: console.error.bind(console);
-};
-
-module.exports = function errorHandler(res) {
+module.exports = function errorHandler(res, log) {
 	return function (error) {
 		if (error && error.errors) {
 			res.json(error);

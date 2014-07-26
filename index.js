@@ -9,6 +9,10 @@ var isObject = function(value) {
 	return type == 'function' || (value && type == 'object') || false;
 }
 
+var log = {
+	error: console.error.bind(console);
+};
+
 var adapter = function(action) {
 	return function (req, res) {
 		var params = _.extend({}, req.params, req.query, req.body);
@@ -17,7 +21,7 @@ var adapter = function(action) {
 			res.json(data);
 		};
 
-		var onrejected = errorhandler(res);
+		var onrejected = errorhandler(res, log);
 
 		try {
 			action(params, req.user, req).done(onFulfilled, onRejected);
@@ -32,6 +36,10 @@ var adapt = function(controller) {
 		return adapter(controller);
 	}
 
+	if (!isObject(controller)) {
+		throw new Error('Controller must be function or object of functions.');
+	}
+
 	var result = {};
 	for (var name in controller) {
 		result[name] = adapter(controller[name]);
@@ -39,5 +47,9 @@ var adapt = function(controller) {
 
 	return result;
 }
+
+adapt.setLogger = function(logger) {
+	log = logger;
+};
 
 module.exports = adapt;
