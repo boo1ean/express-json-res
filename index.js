@@ -24,7 +24,14 @@ var adapter = function(action) {
 		var onrejected = errorhandler(res, log);
 
 		try {
-			action(params, req.user, req).done(onFulfilled, onRejected);
+			var result = action(params, req.user, req);
+
+			if (typeof result.done === 'function') {
+				result.done(onFulfilled, onRejected);
+			} else {
+				onFulfilled(result);
+			}
+
 		} catch (error) {
 			onRejected(error);
 		}
