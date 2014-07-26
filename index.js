@@ -10,7 +10,7 @@ var isObject = function(value) {
 }
 
 var log = {
-	error: console.error.bind(console);
+	error: console.error.bind(console)
 };
 
 var adapter = function(action) {
